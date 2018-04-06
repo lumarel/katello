@@ -80,9 +80,16 @@ module Katello
       end
     end
 
+    def supports_content_type(label)
+      @content_types.each do |type|
+        return true if type.label == label
+      end
+      false
+    end
+
     def default_managed_content_type(label = nil)
       if label
-        @default_managed_content_type_label = label.to_s
+        @default_managed_content_type_class = label.to_s
       else
         @content_types.find { |content_type| content_type.label == @default_managed_content_type_label }
       end
