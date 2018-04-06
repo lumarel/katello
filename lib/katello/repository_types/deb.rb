@@ -22,4 +22,7 @@ Katello::RepositoryTypeManager.register(::Katello::Repository::DEB_TYPE) do
     :pulp3_service_class => ::Katello::Pulp3::Deb,
     :removable => true,
     :uploadable => true
+  content_type Katello::Erratum,
+    :priority => 3,
+    :index => false
 end
