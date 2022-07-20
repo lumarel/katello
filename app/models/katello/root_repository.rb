@@ -123,6 +123,13 @@ module Katello
     scope :custom, -> { where.not(:id => self.redhat) }
     delegate :redhat?, :provider, :organization, to: :product
     delegate :cdn_configuration, to: :organization
+    before_save :reset_deb_errata_url_etag
+
+    def reset_deb_errata_url_etag
+      if self.deb? && !self.changed.include?('deb_errata_url_etag')
+        self.deb_errata_url_etag = nil
+      end
+    end
 
     def library_instance
       repositories.in_default_view.first
