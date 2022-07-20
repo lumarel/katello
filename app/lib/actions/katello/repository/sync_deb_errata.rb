@@ -42,6 +42,10 @@ module Actions
           if output[:modified]
             repo = ::Katello::Repository.find(input[:repo_id])
             erratum_list = JSON.parse(output[:data])
+            # force re-attaching all errata if mirroring
+            if repo.root.mirroring_policy == ::Katello::RootRepository::MIRRORING_POLICY_CONTENT
+              ::Katello::RepositoryErratum.where(repository: repo).destroy_all
+            end
             erratum_list.each do |data|
               ActiveRecord::Base.transaction do
                 erratum = ::Katello::Erratum.find_or_initialize_by(errata_id: data['name'])
