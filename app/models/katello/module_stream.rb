@@ -32,6 +32,7 @@ module Katello
 
     CONTENT_TYPE = "modulemd".freeze
     MODULE_STREAM_DEFAULT_CONTENT_TYPE = "modulemd_defaults".freeze
+    MODULE_STREAM_OBSOLETE_CONTENT_TYPE = "modulemd_obsolete".freeze
 
     def self.default_sort
       order(:name)

@@ -48,6 +48,10 @@ module Katello
           PulpRpmClient::ContentModulemdDefaultsApi.new(api_client)
         end
 
+        def content_modulemd_obsoletes_api
+          PulpRpmClient::ContentModulemdObsoletesApi.new(api_client)
+        end
+
         def content_repo_metadata_files_api
           PulpRpmClient::ContentRepoMetadataFilesApi.new(api_client)
         end
