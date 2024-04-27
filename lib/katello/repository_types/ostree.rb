@@ -18,11 +18,11 @@ Katello::RepositoryTypeManager.register('ostree') do
   distribution_class PulpOstreeClient::OstreeOstreeDistribution
   repo_sync_url_class PulpOstreeClient::RepositorySyncURL
 
-  generic_remote_options :include_refs, title: N_("Include Refs"), type: Array, input_type: "text", delimiter: ",", default: [],
+  generic_remote_option :include_refs, title: N_("Include Refs"), type: Array, input_type: "text", delimiter: ",", default: [],
                          description: N_("A comma-separated list of refs to include during a sync. The wildcards *, ? are recognized.")
 
 
-  generic_remote_options :exclude_refs, title: N_("Exclude Refs"), type: Array, input_type: "text", delimiter: ",", default: [],
+  generic_remote_option :exclude_refs, title: N_("Exclude Refs"), type: Array, input_type: "text", delimiter: ",", default: [],
                          description: N_("A comma-separated list of tags to exclude during a sync. The wildcards *, ? are recognized. 'exclude_refs' is evaluated after 'include_refs'.")
 
   url_description N_("URL of an OSTree repository.")
