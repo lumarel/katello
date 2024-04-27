@@ -14,7 +14,8 @@ module Katello
 
     DOWNLOAD_IMMEDIATE = 'immediate'.freeze
     DOWNLOAD_ON_DEMAND = 'on_demand'.freeze
-    DOWNLOAD_POLICIES = [DOWNLOAD_IMMEDIATE, DOWNLOAD_ON_DEMAND].freeze
+    DOWNLOAD_STREAMED = 'streamed'.freeze
+    DOWNLOAD_POLICIES = [DOWNLOAD_IMMEDIATE, DOWNLOAD_ON_DEMAND, DOWNLOAD_STREAMED].freeze
 
     IGNORABLE_CONTENT_UNIT_TYPES = %w(srpm treeinfo).freeze
     CHECKSUM_TYPES = %w(sha1 sha256).freeze
@@ -23,7 +24,7 @@ module Katello
     SKIPABLE_METADATA_TYPES = [Repository::YUM_TYPE, Repository::DEB_TYPE].freeze
 
     CONTENT_ATTRIBUTE_RESTRICTIONS = {
-      :download_policy => [Repository::YUM_TYPE, Repository::DEB_TYPE, Repository::DOCKER_TYPE]
+      :download_policy => [Repository::YUM_TYPE, Repository::DEB_TYPE, Repository::DOCKER_TYPE, Repository::OSTREE_TYPE]
     }.freeze
 
     MAX_EXPIRE_TIME = 7 * 24 * 60 * 60
@@ -166,8 +167,12 @@ module Katello
     def ensure_compatible_download_policy
       if !url.blank? && URI(url).scheme == 'file' &&
           download_policy == ::Katello::RootRepository::DOWNLOAD_ON_DEMAND
-        errors.add(:download_policy, _("Cannot sync file:// repositories with the On Demand Download Policy"))
+        errors.add(:download_policy, _("Cannot sync file:// repositories with the on demand download policy."))
       end
+      if !url.blank? && URI(url).scheme == 'file' &&
+        download_policy == ::Katello::RootRepository::DOWNLOAD_STREAMED
+      errors.add(:download_policy, _("Cannot sync file:// repositories with the streamed download policy."))
+    end
     end
 
     def valid_mirroring_policies
@@ -212,6 +217,9 @@ module Katello
     def ensure_no_checksum_on_demand
       if checksum_type.present? && download_policy == DOWNLOAD_ON_DEMAND
         errors.add(:checksum_type, _("Checksum type cannot be set for yum repositories with on demand download policy."))
+      end
+      if checksum_type.present? && download_policy == DOWNLOAD_STREAMED
+        errors.add(:checksum_type, _("Checksum type cannot be set for yum repositories with streamed download policy."))
       end
     end
 
@@ -397,6 +405,10 @@ module Katello
 
     def on_demand?
       self.download_policy == DOWNLOAD_ON_DEMAND
+    end
+
+    def streamed?
+      self.download_policy == DOWNLOAD_STREAMED
     end
 
     def pulp_update_needed?

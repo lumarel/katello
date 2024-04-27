@@ -122,6 +122,7 @@ module Katello
 
     scope :has_url, -> { joins(:root).where.not("#{RootRepository.table_name}.url" => nil) }
     scope :on_demand, -> { joins(:root).where("#{RootRepository.table_name}.download_policy" => ::Katello::RootRepository::DOWNLOAD_ON_DEMAND) }
+    scope :streamed, -> { joins(:root).where("#{RootRepository.table_name}.download_policy" => ::Katello::RootRepository::DOWNLOAD_STREAMED) }
     scope :immediate, -> { joins(:root).where("#{RootRepository.table_name}.download_policy" => ::Katello::RootRepository::DOWNLOAD_IMMEDIATE) }
     scope :non_immediate, -> { joins(:root).where.not("#{RootRepository.table_name}.download_policy" => ::Katello::RootRepository::DOWNLOAD_IMMEDIATE) }
     scope :in_default_view, -> { joins(:content_view_version => :content_view).where("#{Katello::ContentView.table_name}.default" => true) }
@@ -321,6 +322,10 @@ module Katello
 
     def on_demand?
       root.download_policy == ::Katello::RootRepository::DOWNLOAD_ON_DEMAND
+    end
+
+    def streamed?
+      root.download_policy == ::Katello::RootRepository::DOWNLOAD_STREAMED
     end
 
     def immediate?
